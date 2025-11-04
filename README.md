@@ -1,4 +1,4 @@
-# Deep Ensemble Meta-Learning
+# Neural Meta Learner Enhancement
 
 > A sophisticated ensemble stacking framework that enhances pre-trained models through meta-learning and deep neural architectures.
 
