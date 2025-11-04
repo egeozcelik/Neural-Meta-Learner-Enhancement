@@ -41,7 +41,7 @@ data/processed/*.csv
 *.csv
 
 results/metrics/*.json
-results/plots/*.png
+!results/plots/*.png
 results/plots/*.jpg
 
 *.log
