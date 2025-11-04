@@ -6,24 +6,9 @@ from src.meta_learners import MetaLearnerFactory
 
 
 class EnsembleStacking:
-    """
-    Ensemble stacking framework for meta-learning
-    Combines base model predictions with meta-learners
-    """
-    
     def __init__(self, base_model, X_train, X_test, y_train, y_test, 
                  X_train_scaled, X_test_scaled, random_state=42):
-        """
-        Args:
-            base_model: Pre-trained base model (CatBoost)
-            X_train: Training features (unscaled)
-            X_test: Test features (unscaled)
-            y_train: Training labels
-            y_test: Test labels
-            X_train_scaled: Scaled training features
-            X_test_scaled: Scaled test features
-            random_state: Random seed
-        """
+       
         self.base_model = base_model
         self.X_train = X_train
         self.X_test = X_test
@@ -36,25 +21,14 @@ class EnsembleStacking:
         self.meta_learners = {}
         self.results = {}
         
-        # Meta-features
         self.X_train_meta = None
         self.X_test_meta = None
     
     def create_meta_features(self, include_original_features=True):
-        """
-        Create meta-feature matrix from base model predictions
-        
-        Args:
-            include_original_features: Whether to include original features
-        
-        Returns:
-            Meta-feature matrices for train and test
-        """
         print("\n")
         print("META-FEATURE ENGINEERING")
         print("_" * 80)
         
-        # Get base model predictions
         train_proba = self.base_model.predict_proba(self.X_train_scaled)
         test_proba = self.base_model.predict_proba(self.X_test_scaled)
         
@@ -63,12 +37,10 @@ class EnsembleStacking:
         print(f"    Test shape:  {test_proba.shape}")
         
         if include_original_features:
-            # Combine probabilities with original features
             self.X_train_meta = np.hstack([self.X_train_scaled, train_proba])
             self.X_test_meta = np.hstack([self.X_test_scaled, test_proba])
             print(f"  ✓ Original features included")
         else:
-            # Use only probabilities
             self.X_train_meta = train_proba
             self.X_test_meta = test_proba
             print(f"  ✓ Using probabilities only")
@@ -81,12 +53,6 @@ class EnsembleStacking:
         return self.X_train_meta, self.X_test_meta
     
     def train_meta_learners(self, learner_types=['logistic', 'lightgbm', 'neural']):
-        """
-        Train multiple meta-learners in parallel
-        
-        Args:
-            learner_types: List of meta-learner types to train
-        """
         print("\n")
         print("META-LEARNING: ENSEMBLE STACKING")
         print("_" * 80 + "\n")
@@ -101,26 +67,20 @@ class EnsembleStacking:
             print("  " + "-" * 76)
             
             try:
-                # Create meta-learner
                 meta_learner = MetaLearnerFactory.create_meta_learner(
                     learner_type, 
                     input_dim=input_dim,
                     random_state=self.random_state
                 )
-                
-                # Train meta-learner
                 meta_learner.fit(self.X_train_meta, self.y_train)
                 print(f"  ✓ Training completed")
                 
-                # Cross-validation
                 print(f"  ✓ Running 5-fold cross-validation...")
                 cv_results = self._cross_validate_meta_learner(meta_learner)
                 
-                # Test set evaluation
                 print(f"  ✓ Evaluating on test set...")
                 test_metrics = self._evaluate_on_test(meta_learner)
                 
-                # Store results
                 self.meta_learners[learner_type] = meta_learner
                 self.results[learner_type] = {
                     'cv_accuracy': cv_results['test_accuracy'].mean(),
@@ -143,15 +103,6 @@ class EnsembleStacking:
         print("_" * 80 + "\n")
     
     def _cross_validate_meta_learner(self, meta_learner):
-        """
-        Perform cross-validation on meta-learner
-        
-        Args:
-            meta_learner: Meta-learner instance
-        
-        Returns:
-            Cross-validation results
-        """
         cv_results = cross_validate(
             meta_learner,
             self.X_train_meta,
@@ -162,21 +113,11 @@ class EnsembleStacking:
             return_train_score=False
         )
         
-        # Rename f1_weighted to f1 for consistency
         cv_results['test_f1'] = cv_results.pop('test_f1_weighted')
         
         return cv_results
     
     def _evaluate_on_test(self, meta_learner):
-        """
-        Evaluate meta-learner on test set
-        
-        Args:
-            meta_learner: Meta-learner instance
-        
-        Returns:
-            Test metrics dictionary
-        """
         y_pred = meta_learner.predict(self.X_test_meta)
         y_pred_proba = meta_learner.predict_proba(self.X_test_meta)[:, 1]
         
@@ -187,37 +128,22 @@ class EnsembleStacking:
         }
     
     def get_best_meta_learner(self):
-        """
-        Identify best performing meta-learner based on test F1 score
-        
-        Returns:
-            Tuple of (best_learner_name, best_meta_learner, best_metrics)
-        """
         if not self.results:
             raise ValueError("No meta-learners trained yet.")
         
-        # Sort by test F1 score
-        best_name = max(self.results, key=lambda k: self.results[k]['test_f1'])
+        
+        best_name = max(self.results, key=lambda k: self.results[k]['test_f1']) # Sort by test F1 score
         best_learner = self.meta_learners[best_name]
         best_metrics = self.results[best_name]
         
         return best_name, best_learner, best_metrics
     
     def compare_with_baseline(self, baseline_metrics):
-        """
-        Compare meta-learners with baseline model
-        
-        Args:
-            baseline_metrics: Baseline model metrics dictionary
-        
-        Returns:
-            Comparison DataFrame
-        """
         print("\n")
         print("PERFORMANCE COMPARISON")
         print("_" * 80 + "\n")
         
-        # Prepare comparison data
+        
         comparison_data = {
             'Model': ['Baseline (CatBoost)'],
             'Accuracy': [baseline_metrics['accuracy']],
@@ -233,12 +159,10 @@ class EnsembleStacking:
         
         df_comparison = pd.DataFrame(comparison_data)
         
-        # Calculate improvements
         baseline_f1 = baseline_metrics['f1_score']
         df_comparison['F1 Improvement'] = df_comparison['F1 Score'] - baseline_f1
         df_comparison['F1 Improvement %'] = (df_comparison['F1 Improvement'] / baseline_f1) * 100
         
-        # Display results
         print("  Results Summary:")
         print("  " + "-" * 76)
         for idx, row in df_comparison.iterrows():
@@ -253,7 +177,6 @@ class EnsembleStacking:
         
         print("\n" + "_" * 80 + "\n")
         
-        # Find best performer
         best_name, _, best_metrics = self.get_best_meta_learner()
         best_improvement = ((best_metrics['test_f1'] - baseline_f1) / baseline_f1) * 100
         
@@ -267,13 +190,10 @@ class EnsembleStacking:
         return df_comparison
     
     def get_meta_learner(self, learner_type):
-        """Get specific meta-learner instance"""
         return self.meta_learners.get(learner_type)
     
     def get_results(self):
-        """Get all results"""
         return self.results
     
     def get_meta_features(self):
-        """Get meta-feature matrices"""
         return self.X_train_meta, self.X_test_meta

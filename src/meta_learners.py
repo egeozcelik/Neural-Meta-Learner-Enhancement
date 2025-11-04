@@ -9,18 +9,12 @@ from lightgbm import LGBMClassifier
 
 
 class LogisticMetaLearner(BaseEstimator, ClassifierMixin):
-    """
-    Simple logistic regression for probability calibration
-    Fast, interpretable, low-complexity meta-learner
-    """
-    
     def __init__(self, random_state=42):
         self.random_state = random_state
         self.model = None
         self.name = "Logistic Regression"
     
     def fit(self, X, y):
-        """Train meta-learner"""
         self.model = LogisticRegression(
             max_iter=1000,
             random_state=self.random_state,
@@ -31,11 +25,9 @@ class LogisticMetaLearner(BaseEstimator, ClassifierMixin):
         return self
     
     def predict(self, X):
-        """Predict class labels"""
         return self.model.predict(X)
     
     def predict_proba(self, X):
-        """Predict class probabilities"""
         return self.model.predict_proba(X)
     
     def get_name(self):
@@ -43,18 +35,12 @@ class LogisticMetaLearner(BaseEstimator, ClassifierMixin):
 
 
 class LightGBMMetaLearner(BaseEstimator, ClassifierMixin):
-    """
-    LightGBM meta-learner for capturing complex patterns
-    Efficient gradient boosting with low memory footprint
-    """
-    
     def __init__(self, random_state=42):
         self.random_state = random_state
         self.model = None
         self.name = "LightGBM"
     
     def fit(self, X, y):
-        """Train meta-learner"""
         self.model = LGBMClassifier(
             n_estimators=50,
             max_depth=3,
@@ -68,11 +54,9 @@ class LightGBMMetaLearner(BaseEstimator, ClassifierMixin):
         return self
     
     def predict(self, X):
-        """Predict class labels"""
         return self.model.predict(X)
     
     def predict_proba(self, X):
-        """Predict class probabilities"""
         return self.model.predict_proba(X)
     
     def get_name(self):
@@ -80,11 +64,6 @@ class LightGBMMetaLearner(BaseEstimator, ClassifierMixin):
 
 
 class ShallowNeuralNet(nn.Module):
-    """
-    Shallow neural network architecture for meta-learning
-    Lightweight deep learning approach optimized for MacBook Air
-    """
-    
     def __init__(self, input_dim, hidden_dim=32, dropout_rate=0.2):
         super(ShallowNeuralNet, self).__init__()
         
@@ -107,11 +86,7 @@ class ShallowNeuralNet(nn.Module):
 
 
 class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
-    """
-    PyTorch neural network meta-learner wrapper
-    Handles training, prediction, and probability estimation
-    """
-    
+
     def __init__(self, input_dim=None, random_state=42, epochs=50, batch_size=64, learning_rate=0.001):
         self.input_dim = input_dim
         self.random_state = random_state
@@ -127,8 +102,6 @@ class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
         self.device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
     
     def fit(self, X, y):
-        """Train neural network meta-learner"""
-        # Initialize model if not already done
         if self.model is None or self.input_dim is None:
             self.input_dim = X.shape[1]
             torch.manual_seed(self.random_state)
@@ -137,15 +110,13 @@ class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
             self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
             self.model.to(self.device)
         
-        # Convert to PyTorch tensors
-        X_tensor = torch.FloatTensor(X).to(self.device)
+        X_tensor = torch.FloatTensor(X).to(self.device)# Convert--> PyTorch tensors
+
         y_tensor = torch.LongTensor(y.values if hasattr(y, 'values') else y).to(self.device)
         
-        # Create DataLoader
         dataset = TensorDataset(X_tensor, y_tensor)
         dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
         
-        # Training loop
         self.model.train()
         for epoch in range(self.epochs):
             epoch_loss = 0.0
@@ -157,7 +128,6 @@ class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
                 self.optimizer.step()
                 epoch_loss += loss.item()
             
-            # Optional: Print progress every 10 epochs
             if (epoch + 1) % 10 == 0:
                 avg_loss = epoch_loss / len(dataloader)
                 print(f"    Epoch [{epoch+1}/{self.epochs}] Loss: {avg_loss:.4f}")
@@ -165,7 +135,6 @@ class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
         return self
     
     def predict(self, X):
-        """Predict class labels"""
         self.model.eval()
         with torch.no_grad():
             X_tensor = torch.FloatTensor(X).to(self.device)
@@ -174,7 +143,6 @@ class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
             return predicted.cpu().numpy()
     
     def predict_proba(self, X):
-        """Predict class probabilities"""
         self.model.eval()
         with torch.no_grad():
             X_tensor = torch.FloatTensor(X).to(self.device)
@@ -187,24 +155,8 @@ class NeuralMetaLearner(BaseEstimator, ClassifierMixin):
 
 
 class MetaLearnerFactory:
-    """
-    Factory class for creating meta-learner instances
-    Provides unified interface for all meta-learners
-    """
-    
     @staticmethod
     def create_meta_learner(learner_type, input_dim=None, random_state=42):
-        """
-        Create meta-learner instance
-        
-        Args:
-            learner_type: Type of meta-learner ('logistic', 'lightgbm', 'neural')
-            input_dim: Input dimension (required for neural network)
-            random_state: Random seed for reproducibility
-        
-        Returns:
-            Meta-learner instance
-        """
         if learner_type == 'logistic':
             return LogisticMetaLearner(random_state=random_state)
         
@@ -221,5 +173,4 @@ class MetaLearnerFactory:
     
     @staticmethod
     def get_available_learners():
-        """Return list of available meta-learner types"""
         return ['logistic', 'lightgbm', 'neural']

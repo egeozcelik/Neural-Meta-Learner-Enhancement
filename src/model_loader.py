@@ -7,16 +7,8 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, classificat
 
 
 class BaseModelLoader:
-    """
-    Loads pre-trained CatBoost model and evaluates baseline performance
-    """
     
     def __init__(self, model_dir="models/base_model", data_path="data/processed/processed_data.csv"):
-        """
-        Args:
-            model_dir: Directory containing trained model artifacts
-            data_path: Path to processed dataset
-        """
         self.model_dir = Path(model_dir)
         self.data_path = Path(data_path)
         
@@ -35,23 +27,18 @@ class BaseModelLoader:
         self.baseline_metrics = {}
     
     def load_artifacts(self):
-        """Load model, scaler, and feature schema"""
-      
         print("LOADING BASE MODEL ARTIFACTS")
         print("_" * 80)
         
         try:
-            # Load model
             model_path = self.model_dir / "best_catboost_model.pkl"
             self.model = joblib.load(model_path)
             print(f"  ✓ Model loaded from {model_path.name}")
             
-            # Load scaler
             scaler_path = self.model_dir / "robust_scaler.pkl"
             self.scaler = joblib.load(scaler_path)
             print(f"  ✓ Scaler loaded from {scaler_path.name}")
             
-            # Load feature columns
             columns_path = self.model_dir / "model_columns.pkl"
             self.feature_columns = joblib.load(columns_path)
             print(f"  ✓ Feature schema loaded: {len(self.feature_columns)} features")
@@ -65,24 +52,20 @@ class BaseModelLoader:
             return False
     
     def load_and_prepare_data(self, test_size=0.2, random_state=42):
-        """Load dataset and create train/test split"""
         print("\n")
         print("DATA PREPARATION")
         print("_" * 80)
         
         try:
-            # Load data
             df = pd.read_csv(self.data_path)
             print(f"  ✓ Data loaded: {df.shape[0]:,} rows × {df.shape[1]} columns")
             
-            # Separate features and target
             if 'winner' not in df.columns:
                 raise ValueError("Target column 'winner' not found in dataset")
             
             y = df['winner']
             X = df.drop(['winner'], axis=1)
             
-            # Handle categorical columns
             cat_cols = X.select_dtypes(include=['object']).columns
             if len(cat_cols) > 0:
                 print(f"  ✓ Encoding {len(cat_cols)} categorical columns...")
@@ -91,14 +74,12 @@ class BaseModelLoader:
                     le = LabelEncoder()
                     X[col] = le.fit_transform(X[col].astype(str))
             
-            # Ensure feature alignment
             if not all(col in X.columns for col in self.feature_columns):
                 missing = [col for col in self.feature_columns if col not in X.columns]
                 raise ValueError(f"Missing features in dataset: {missing[:5]}...")
             
             X = X[self.feature_columns]
             
-            # Train/test split
             self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
                 X, y, test_size=test_size, random_state=random_state, stratify=y
             )
@@ -106,7 +87,6 @@ class BaseModelLoader:
             print(f"  ✓ Train set: {self.X_train.shape[0]:,} samples")
             print(f"  ✓ Test set: {self.X_test.shape[0]:,} samples")
             
-            # Scale features
             self.X_train_scaled = self.scaler.transform(self.X_train)
             self.X_test_scaled = self.scaler.transform(self.X_test)
             print(f"  ✓ Features scaled with RobustScaler")
@@ -120,17 +100,14 @@ class BaseModelLoader:
             return False
     
     def evaluate_baseline(self):
-        """Evaluate base model performance"""
         print("\n")
         print("BASE MODEL EVALUATION")
         print("_" * 80)
         
         try:
-            # Predictions
             y_pred = self.model.predict(self.X_test_scaled)
             y_pred_proba = self.model.predict_proba(self.X_test_scaled)[:, 1]
             
-            # Calculate metrics
             accuracy = accuracy_score(self.y_test, y_pred)
             f1 = f1_score(self.y_test, y_pred, average='weighted')
             roc_auc = roc_auc_score(self.y_test, y_pred_proba)
@@ -141,7 +118,6 @@ class BaseModelLoader:
                 'roc_auc': roc_auc
             }
             
-            # Display results
             print(f"\n  Model: CatBoost (Pre-trained)")
             print(f"  Accuracy:  {accuracy:.4f}")
             print(f"  F1 Score:  {f1:.4f}")
@@ -151,7 +127,6 @@ class BaseModelLoader:
             print("  " + "-" * 76)
             target_names = ['Blue Corner', 'Red Corner']
             report = classification_report(self.y_test, y_pred, target_names=target_names)
-            # Indent the report
             for line in report.split('\n'):
                 if line.strip():
                     print(f"  {line}")
@@ -165,17 +140,13 @@ class BaseModelLoader:
             return False
     
     def run_baseline_evaluation(self):
-        """Execute complete baseline evaluation pipeline"""
         
-        # Step 1: Load artifacts
         if not self.load_artifacts():
             return None
         
-        # Step 2: Prepare data
         if not self.load_and_prepare_data():
             return None
         
-        # Step 3: Evaluate
         if not self.evaluate_baseline():
             return None
         
@@ -186,7 +157,6 @@ class BaseModelLoader:
         return self.baseline_metrics
     
     def get_data(self):
-        """Return prepared datasets"""
         return {
             'X_train': self.X_train,
             'X_test': self.X_test,
@@ -197,13 +167,10 @@ class BaseModelLoader:
         }
     
     def get_model(self):
-        """Return base model"""
         return self.model
     
     def get_scaler(self):
-        """Return scaler"""
         return self.scaler
     
     def get_baseline_metrics(self):
-        """Return baseline metrics"""
         return self.baseline_metrics
