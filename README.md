@@ -451,7 +451,7 @@ The meta-learners don't just "smooth" predictions—they learn **when the base m
 If you use this framework in your research, please cite:
 
 ```bibtex
-@software{deep_ensemble_meta_learning,
+@software{neural_meta_learner_enhancement,
   author = {Ege Ozcelik},
   title = {Neural Meta Learner Enhancement: Enhancing Pre-trained ML Model via Stacking},
   year = {2025},
