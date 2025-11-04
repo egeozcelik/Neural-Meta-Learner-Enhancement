@@ -2,7 +2,7 @@
 
 > A sophisticated ensemble stacking framework that enhances pre-trained models through meta-learning and deep neural architectures.
 
-**Continuation of:** [Comparative-ML-Model-Evaluation](https://github.com/username/Comparative-ML-Model-Evaluation)
+**Continuation of:** [Comparative-ML-Model-Evaluation](https://github.com/egeozcelik/Comparative-ML-Model-Evaluation)
 
 ---
 
@@ -18,14 +18,14 @@ This project implements advanced **ensemble stacking** techniques by leveraging 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     Pre-trained CatBoost                     │
-│                    (Frozen Base Model)                       │
+│                     Pre-trained CatBoost                    │
+│                    (Frozen Base Model)                      │
 └──────────────────────────┬──────────────────────────────────┘
                            │ Probability Predictions
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    Meta-Feature Layer                        │
-│           [P(class_0), P(class_1)] + Original Features       │
+│                    Meta-Feature Layer                       │
+│           [P(class_0), P(class_1)] + Original Features      │
 └──────────────────────────┬──────────────────────────────────┘
                            │
         ┌──────────────────┼──────────────────┐
@@ -99,32 +99,6 @@ This repository is under active development as a direct continuation of the base
 python main.py
 ```
 
-Expected console output:
-```
-═══════════════════════════════════════════════════════════════
-BASE MODEL EVALUATION
-═══════════════════════════════════════════════════════════════
-Model: CatBoost
-Accuracy: 0.6234 | F1: 0.6187 | ROC-AUC: 0.6891
-═══════════════════════════════════════════════════════════════
-
-═══════════════════════════════════════════════════════════════
-META-LEARNING: ENSEMBLE STACKING
-═══════════════════════════════════════════════════════════════
-
-[1/3] Logistic Regression
-      CV Accuracy: 0.6312 | F1: 0.6289 | Δ +1.25%
-
-[2/3] LightGBM
-      CV Accuracy: 0.6401 | F1: 0.6378 | Δ +3.09%
-
-[3/3] Shallow Neural Network
-      CV Accuracy: 0.6356 | F1: 0.6334 | Δ +2.38%
-
-═══════════════════════════════════════════════════════════════
-BEST PERFORMER: LightGBM (+3.09% improvement)
-═══════════════════════════════════════════════════════════════
-```
 
 ---
 
@@ -159,12 +133,9 @@ All outputs are automatically saved:
 
 ---
 
-## License
-
-MIT
 
 ---
 
 ## Acknowledgments
 
-Built upon the foundation established in [Comparative-ML-Model-Evaluation](https://github.com/username/Comparative-ML-Model-Evaluation)
+Built upon the foundation established in [Comparative-ML-Model-Evaluation](https://github.com/egeozcelik/Comparative-ML-Model-Evaluation)
