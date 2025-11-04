@@ -1,5 +1,4 @@
 # Neural Meta Learner Enhancement
-## on pre-trained ML model.
 
 > Advanced ensemble stacking framework that enhances pre-trained machine learning models through meta-learning and deep neural architectures.
 
