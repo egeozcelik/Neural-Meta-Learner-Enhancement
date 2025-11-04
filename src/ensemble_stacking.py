@@ -197,3 +197,62 @@ class EnsembleStacking:
     
     def get_meta_features(self):
         return self.X_train_meta, self.X_test_meta
+    
+    def save_best_meta_learner(self, save_dir="models/meta_learners"):
+        import json
+        from pathlib import Path
+        import joblib
+        
+        print("\n")
+        print("SAVING BEST META-LEARNER")
+        print("_" * 80 + "\n")
+        
+        if not self.results:
+            print("  ✗ No meta-learners to save")
+            print("_" * 80 + "\n")
+            return
+        
+        save_path = Path(save_dir)
+        save_path.mkdir(parents=True, exist_ok=True)
+        
+        best_name, best_learner, best_metrics = self.get_best_meta_learner()
+        
+        model_path = save_path / "best_meta_learner.pkl"
+        joblib.dump(best_learner, model_path)
+        print(f"  ✓ Model saved: {model_path}")
+        
+        type_path = save_path / "meta_learner_type.txt"
+        with open(type_path, 'w') as f:
+            f.write(best_name)
+        
+        metrics_path = save_path / "performance_metrics.json"
+        metrics_data = {
+            "model_type": best_name,
+            "test_accuracy": float(best_metrics['test_accuracy']),
+            "test_f1_score": float(best_metrics['test_f1']),
+            "test_roc_auc": float(best_metrics['test_roc_auc']),
+            "cv_accuracy": float(best_metrics['cv_accuracy']),
+            "cv_f1_score": float(best_metrics['cv_f1'])
+        }
+        with open(metrics_path, 'w') as f:
+            json.dump(metrics_data, f, indent=2)
+        print(f"  ✓ Metrics saved: {metrics_path}")
+        
+        config_path = save_path / "meta_feature_config.json"
+        config_data = {
+            "meta_feature_dim": self.X_train_meta.shape[1],
+            "original_feature_dim": self.X_train.shape[1],
+            "base_model_probabilities": 2,
+            "include_original_features": True
+        }
+        with open(config_path, 'w') as f:
+            json.dump(config_data, f, indent=2)
+        print(f"  ✓ Configuration saved: {config_path}")
+        
+        print("\n" + "_" * 80)
+        print(f"DEPLOYMENT ARTIFACTS SAVED: {best_name.upper()}")
+        print("_" * 80)
+        print(f"  Directory: {save_path.absolute()}")
+        print(f"  Model Type: {best_name}")
+        print(f"  Test F1 Score: {best_metrics['test_f1']:.4f}")
+        print("_" * 80 + "\n")

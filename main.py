@@ -52,8 +52,13 @@ ensemble.create_meta_features(include_original_features=True)
 ensemble.train_meta_learners(learner_types=['logistic', 'lightgbm', 'neural'])
 
 comparison_df = ensemble.compare_with_baseline(baseline_metrics)
-
 print("\nEnsemble Stacking Completed.")
+
+print("\nSaving best meta-learner...")
+ensemble.save_best_meta_learner(save_dir="models/meta_learners")
+
+
+
 
 from src.evaluation import ModelEvaluation
 evaluator = ModelEvaluation(output_dir="results/plots")
