@@ -1,8 +1,9 @@
-# Deep Ensemble Meta-Learning
+# Neural Meta Learner Enhancement
+## on pre-trained ML model.
 
 > Advanced ensemble stacking framework that enhances pre-trained machine learning models through meta-learning and deep neural architectures.
 
-**Continuation of:** [Comparative-ML-Model-Evaluation](https://github.com/username/Comparative-ML-Model-Evaluation)
+**Continuation of:** [Comparative-ML-Model-Evaluation](https://github.com/egeozcelik/Comparative-ML-Model-Evaluation)
 
 ---
 
@@ -20,15 +21,15 @@ The framework employs a two-tier learning architecture:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│              Pre-trained CatBoost Base Model                 │
-│                 (Frozen, F1: 87.28%)                         │
+│              Pre-trained CatBoost Base Model                │
+│                 (Frozen, F1: 87.28%)                        │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                   Probability Predictions
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  Meta-Feature Engineering                    │
+│                  Meta-Feature Engineering                   │
 │    Base Probabilities [P₀, P₁] + Original Features (59)     │
 └──────────────────────────┬──────────────────────────────────┘
                            │
@@ -364,11 +365,10 @@ Detailed per-class performance analysis across all models:
 ### Setup
 
 ```bash
-# Clone repository
-git clone https://github.com/username/Deep-Ensemble-Meta-Learning.git
-cd Deep-Ensemble-Meta-Learning
+git clone https://github.com/egeozcelik/Neural-Meta-Learner-Enhancement 
+cd Neural-Meta-Learner-Enhancement
 
-# Create virtual environment
+# Create virtual environment to avoid library dependency confusion
 python -m venv venv
 
 # Activate environment
@@ -377,11 +377,6 @@ source venv/bin/activate          # macOS/Linux
 
 # Install dependencies
 pip install -r requirements.txt
-
-# Copy trained models from Part 1
-cp /path/to/part1/models/saved_models/* models/base_model/
-cp /path/to/part1/data/processed/processed_data.csv data/processed/
-```
 
 ---
 
@@ -412,42 +407,6 @@ python main.py
 | **Validation** | Stratified 5-Fold CV | Robust performance estimation |
 | **Visualization** | Matplotlib, Seaborn | High-quality scientific plots |
 
----
-
-## Project Structure
-
-```
-Deep-Ensemble-Meta-Learning/
-│
-├── models/
-│   └── base_model/
-│       ├── best_catboost_model.pkl       # Pre-trained CatBoost
-│       ├── robust_scaler.pkl             # Feature scaler
-│       └── model_columns.pkl             # Feature schema
-│
-├── data/
-│   └── processed/
-│       └── processed_data.csv            # Processed dataset
-│
-├── src/
-│   ├── __init__.py
-│   ├── model_loader.py                   # Base model loading & evaluation
-│   ├── meta_learners.py                  # Meta-learner implementations
-│   ├── ensemble_stacking.py              # Stacking framework
-│   └── evaluation.py                     # Visualization & analysis
-│
-├── results/
-│   ├── metrics/                          # Performance metrics (future)
-│   └── plots/                            # Generated visualizations
-│       ├── confusion_matrix_*.png
-│       ├── roc_curves_comparison.png
-│       └── feature_importance_*.png
-│
-├── main.py                               # Main execution pipeline
-├── requirements.txt                      # Python dependencies
-├── .gitignore
-└── README.md
-```
 
 ---
 
@@ -468,7 +427,7 @@ The meta-learners don't just "smooth" predictions—they learn **when the base m
 
 ---
 
-## Comparison with Part 1
+## Comparison with Part 1 ([Comparative-ML-Model-Evaluation](https://github.com/egeozcelik/Comparative-ML-Model-Evaluation))
 
 | Aspect | Part 1 | Part 2 (This Project) |
 |--------|--------|----------------------|
@@ -484,11 +443,7 @@ The meta-learners don't just "smooth" predictions—they learn **when the base m
 ## Future Enhancements
 
 - [ ] **Weighted Blending:** Combine meta-learners via learned weights
-- [ ] **Deep Meta-Networks:** Experiment with deeper architectures (3-4 layers)
-- [ ] **Attention Mechanisms:** Add attention layers to focus on critical features
-- [ ] **Adversarial Validation:** Improve robustness against distribution shift
-- [ ] **AutoML Integration:** Hyperparameter optimization for meta-learners
-- [ ] **Production Deployment:** Flask/FastAPI REST API
+- [ ] **Deep Meta-Networks:** Experiment with deeper architectures (3-4 layers maybe)
 
 ---
 
@@ -498,27 +453,17 @@ If you use this framework in your research, please cite:
 
 ```bibtex
 @software{deep_ensemble_meta_learning,
-  author = {Your Name},
-  title = {Deep Ensemble Meta-Learning: Enhancing Pre-trained Models via Stacking},
+  author = {Ege Ozcelik},
+  title = {Neural Meta Learner Enhancement: Enhancing Pre-trained ML Model via Stacking},
   year = {2025},
-  url = {https://github.com/username/Deep-Ensemble-Meta-Learning}
+  url = {https://github.com/egeozcelik/Neural-Meta-Learner-Enhancement}
 }
 ```
 
 ---
 
-## License
-
-MIT License - see [LICENSE](LICENSE) for details
-
----
-
 ## Acknowledgments
 
-- **Part 1 Foundation:** [Comparative-ML-Model-Evaluation](https://github.com/username/Comparative-ML-Model-Evaluation)
+- **Part 1 Foundation:** [Comparative-ML-Model-Evaluation](https://github.com/egeozcelik/Comparative-ML-Model-Evaluation)
 - **Libraries:** Scikit-learn, CatBoost, LightGBM, PyTorch
-- **Hardware Optimization:** Apple MPS framework for M1/M2 acceleration
 
----
-
-**Built with precision. Optimized for performance. Designed for MacBook Air.**

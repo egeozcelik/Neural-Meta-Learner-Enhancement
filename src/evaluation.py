@@ -205,7 +205,7 @@ class ModelEvaluation:
             X_test_meta: Meta-features (for meta-learners)
             X_train: Training features (for feature names)
         """
-        print("\n" + "_" * 80)
+        print("\n")
         print("EVALUATION & VISUALIZATION")
         print("_" * 80 + "\n")
         
@@ -231,8 +231,8 @@ class ModelEvaluation:
         for model_name, meta_learner in meta_learners_dict.items():
             self.plot_feature_importance(baseline_model, meta_learner, X_train, model_name)
         
-        print("\n" + "_" * 80)
+        print("\n")
         print("EVALUATION COMPLETED")
-        print("_" * 80)
+        print("\n")
         print(f"  All plots saved in: {self.output_dir.absolute()}")
         print("_" * 80 + "\n")

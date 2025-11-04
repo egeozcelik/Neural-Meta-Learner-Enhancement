@@ -36,7 +36,7 @@ class BaseModelLoader:
     
     def load_artifacts(self):
         """Load model, scaler, and feature schema"""
-        print("\n" + "_" * 80)
+      
         print("LOADING BASE MODEL ARTIFACTS")
         print("_" * 80)
         
@@ -66,7 +66,7 @@ class BaseModelLoader:
     
     def load_and_prepare_data(self, test_size=0.2, random_state=42):
         """Load dataset and create train/test split"""
-        print("_" * 80)
+        print("\n")
         print("DATA PREPARATION")
         print("_" * 80)
         
@@ -121,7 +121,7 @@ class BaseModelLoader:
     
     def evaluate_baseline(self):
         """Evaluate base model performance"""
-        print("_" * 80)
+        print("\n")
         print("BASE MODEL EVALUATION")
         print("_" * 80)
         
@@ -166,9 +166,6 @@ class BaseModelLoader:
     
     def run_baseline_evaluation(self):
         """Execute complete baseline evaluation pipeline"""
-        print("\n" + "_" * 80)
-        print("BASELINE EVALUATION PIPELINE")
-        print("_" * 80 + "\n")
         
         # Step 1: Load artifacts
         if not self.load_artifacts():
@@ -182,9 +179,9 @@ class BaseModelLoader:
         if not self.evaluate_baseline():
             return None
         
-        print("_" * 80)
+        print("\n")
         print("BASELINE EVALUATION COMPLETED")
-        print("_" * 80 + "\n")
+        print("_" * 80)
         
         return self.baseline_metrics
     

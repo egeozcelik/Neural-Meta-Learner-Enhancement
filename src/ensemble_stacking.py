@@ -50,7 +50,7 @@ class EnsembleStacking:
         Returns:
             Meta-feature matrices for train and test
         """
-        print("\n" + "_" * 80)
+        print("\n")
         print("META-FEATURE ENGINEERING")
         print("_" * 80)
         
@@ -87,7 +87,7 @@ class EnsembleStacking:
         Args:
             learner_types: List of meta-learner types to train
         """
-        print("_" * 80)
+        print("\n")
         print("META-LEARNING: ENSEMBLE STACKING")
         print("_" * 80 + "\n")
         
@@ -213,7 +213,7 @@ class EnsembleStacking:
         Returns:
             Comparison DataFrame
         """
-        print("_" * 80)
+        print("\n")
         print("PERFORMANCE COMPARISON")
         print("_" * 80 + "\n")
         
@@ -257,9 +257,9 @@ class EnsembleStacking:
         best_name, _, best_metrics = self.get_best_meta_learner()
         best_improvement = ((best_metrics['test_f1'] - baseline_f1) / baseline_f1) * 100
         
-        print("_" * 80)
+        print("\n")
+        print("_" * 80 + "\n")
         print(f"BEST PERFORMER: {best_name.upper()}")
-        print("_" * 80)
         print(f"  Test F1 Score: {best_metrics['test_f1']:.4f}")
         print(f"  Improvement:   ↑ {best_improvement:.2f}%")
         print("_" * 80 + "\n")
